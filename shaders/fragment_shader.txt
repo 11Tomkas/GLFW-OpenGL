@@ -1,0 +1,16 @@
+#version 460 core
+
+in vec2 fTexCoord;
+
+out vec4 oFragment;
+
+uniform sampler2D uTexSampler0;
+uniform sampler2D uTexSampler1;
+
+void main()
+{
+    vec4 texture0 = texture(uTexSampler0, fTexCoord);
+    vec4 texture1 = texture(uTexSampler1, fTexCoord);
+
+    oFragment = mix(texture0, texture1, 0.2f);
+}
