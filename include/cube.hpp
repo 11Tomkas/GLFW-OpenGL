@@ -1,24 +1,19 @@
 #ifndef CUBE_HPP
 #define CUBE_HPP
 
-#include "util.hpp"
+#include "glm.hpp"
 #include "shader.hpp"
 #include "vertex_array.hpp"
-#include "vertex_buffer.hpp"
 #include "texture.hpp"
-#include "light.hpp"
+#include "mvp.hpp"
+#include "material.hpp"
 
-struct Material
-{
-    const Texture& diffuse;
-    const Texture& specular;
-    float shininess;
-};
+struct Light;
 
 class Cube
 {
     public:
-        Cube(const VertexBuffer& arrayBuffer);
+        Cube();
         Cube(const Cube&) = delete;
         Cube(Cube&&) = delete;
         ~Cube() = default;
@@ -26,14 +21,15 @@ class Cube
         Cube& operator=(Cube&&) = delete;
 
         void setPosition(const glm::vec3& position);
-        void setRotation(const glm::vec3& rotation);
-        const glm::vec3& position() const;
-        const glm::vec3& rotation() const;
-        void draw(const Shader& shader, const MVP& mvp, const Material& material, const Lights& lights);
-    private:
+        void setRotation(float angle, const glm::vec3& rotationAxis);
+        void setScale(const glm::vec3& scale);
+        void draw(const Shader& shader, MVP& mvp, const Material& material, const Light& light);
+    protected:
         VertexArray m_vertexArray;
         glm::vec3 m_position;
-        glm::vec3 m_rotation;
+        float m_angle;
+        glm::vec3 m_rotationAxis;
+        glm::vec3 m_scale;
 };
 
 #endif

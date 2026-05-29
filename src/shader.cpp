@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "glad\gl.h"
+#include "glad.hpp"
 
 Shader::Shader()
     : m_vertex{ glCreateShader(GL_VERTEX_SHADER) }

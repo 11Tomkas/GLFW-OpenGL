@@ -1,6 +1,6 @@
 #include "camera.hpp"
 
-#include "time.hpp"
+#include "delta.hpp"
 
 Camera::Camera()
     : m_position{ 0.0f, 0.0f, 0.0f }
@@ -14,19 +14,25 @@ Camera::Camera()
 {
 }
 
+void Camera::update(const Window& window)
+{
+    updatePosition(window);
+    updateFront(window);
+}
+
 void Camera::updatePosition(const Window& window)
 {
     if (window.getKey(GLFW_KEY_A))
-        m_position -= m_right * 2.0f * gTime.delta();
+        m_position -= m_right * 2.0f * delta.time();
     else
     if (window.getKey(GLFW_KEY_D))
-        m_position += m_right * 2.0f * gTime.delta();
+        m_position += m_right * 2.0f * delta.time();
 
     if (window.getKey(GLFW_KEY_W))
-        m_position += m_front * 2.0f * gTime.delta();
+        m_position += m_front * 2.0f * delta.time();
     else
     if (window.getKey(GLFW_KEY_S))
-        m_position -= m_front * 2.0f * gTime.delta();
+        m_position -= m_front * 2.0f * delta.time();
 
     if (window.getKey(GLFW_KEY_A) || window.getKey(GLFW_KEY_D) || window.getKey(GLFW_KEY_W) || window.getKey(GLFW_KEY_S))
         m_view = glm::lookAt(m_position, (m_position + m_front), m_up);
@@ -34,15 +40,15 @@ void Camera::updatePosition(const Window& window)
 
 void Camera::updateFront(const Window& window)
 {
-    static glm::vec2 s_cursorPos{ window.getCursorPos() };
+    static glm::vec2 sCursorPos{ window.getCursorPos() };
     glm::vec2 cursorPos{ window.getCursorPos() };
 
-    if (s_cursorPos != cursorPos)
+    if (sCursorPos != cursorPos)
     {
-        glm::vec2 cursorOffset{ cursorPos - s_cursorPos };
+        glm::vec2 cursorOffset{ cursorPos - sCursorPos };
 
-        m_yaw += cursorOffset.x * 3.0f * gTime.delta();
-        m_pitch += -cursorOffset.y * 3.0f * gTime.delta();
+        m_yaw += cursorOffset.x * 2.0f * delta.time();
+        m_pitch += -cursorOffset.y * 2.0f * delta.time();
 
         if (m_pitch > 89.0f)
             m_pitch = 89.0f;
@@ -58,7 +64,7 @@ void Camera::updateFront(const Window& window)
         m_up = glm::normalize(glm::cross(m_right, m_front));
         m_view = glm::lookAt(m_position, (m_position + m_front), m_up);
 
-        s_cursorPos = cursorPos;
+        sCursorPos = cursorPos;
     }
 }
 

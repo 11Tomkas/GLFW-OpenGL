@@ -1,6 +1,6 @@
 #include "vertex_array.hpp"
 
-#include "glad\gl.h"
+#include "glad.hpp"
 
 VertexArray::VertexArray()
     : m_name{ 0 }

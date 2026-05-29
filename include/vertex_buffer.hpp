@@ -11,10 +11,12 @@ class VertexBuffer
         VertexBuffer& operator=(const VertexBuffer&) = delete;
         VertexBuffer& operator=(VertexBuffer&&) = delete;
 
+        void genBuffers();
         void bind(unsigned int target) const;
         void unbind(unsigned int target) const;
         void data(unsigned int target, long long size, const void* data, unsigned int usage) const;
-        void vertexAttribPointer(unsigned int index, int size, unsigned int type, bool normalized, int stride, const void* pointer) const;
+        void enableVertexAttribArray(unsigned int index);
+        void vertexAttribPointer(unsigned int index, int size, unsigned int type, unsigned char normalized, int stride, const void* pointer) const;
     private:
         unsigned int m_name;
 };

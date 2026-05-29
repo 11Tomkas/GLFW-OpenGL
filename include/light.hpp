@@ -1,13 +1,8 @@
 #ifndef LIGHT_HPP
 #define LIGHT_HPP
 
-#include "glm\glm.hpp"
-#include "glm\gtc\matrix_transform.hpp"
-#include "glm\gtc\type_ptr.hpp"
-#include "util.hpp"
-#include "shader.hpp"
-#include "vertex_array.hpp"
-#include "vertex_buffer.hpp"
+#include "glm.hpp"
+#include "cube.hpp"
 
 struct DirectionLight
 {
@@ -18,17 +13,9 @@ struct DirectionLight
 };
 
 class PointLight
+    : public Cube
 {
     public:
-        PointLight(const VertexBuffer& arrayBuffer);
-        PointLight(const PointLight&) = delete;
-        PointLight(PointLight&&) = delete;
-        ~PointLight() = default;
-        PointLight& operator=(const PointLight&) = delete;
-        PointLight& operator=(PointLight&&) = delete;
-
-        glm::vec3 position;
-        glm::vec3 scale;
         float constant;
         float linear;
         float quadratic;
@@ -36,9 +23,14 @@ class PointLight
         glm::vec3 diffuse;
         glm::vec3 specular;
 
-        void draw(const Shader& shader, const MVP& mvp) const;
-    private:
-        VertexArray m_vertexArray;
+        PointLight();
+        PointLight(const PointLight&) = delete;
+        PointLight(PointLight&&) = delete;
+        ~PointLight() = default;
+        PointLight& operator=(const PointLight&) = delete;
+        PointLight& operator=(PointLight&&) = delete;
+
+        void draw(const Shader& shader, MVP& mvp);
 };
 
 struct SpotLight
@@ -55,7 +47,7 @@ struct SpotLight
     glm::vec3 specular;
 };
 
-struct Lights
+struct Light
 {
     DirectionLight directionLight;
     PointLight pointLights[4];

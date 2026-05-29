@@ -1,7 +1,7 @@
 #include "texture.hpp"
 
-#include "glad\gl.h"
-#include "stb_image.h"
+#include "glad.hpp"
+#include "stb_image.hpp"
 
 Texture::Texture()
     : m_name{ 0 }

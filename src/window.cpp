@@ -32,14 +32,14 @@ int Window::shouldClose() const
     return glfwWindowShouldClose(m_pWindow);
 }
 
-int Window::getKey(int key) const
-{
-    return glfwGetKey(m_pWindow, key);
-}
-
 void Window::swapBuffers() const
 {
     glfwSwapBuffers(m_pWindow);
+}
+
+int Window::getKey(int key) const
+{
+    return glfwGetKey(m_pWindow, key);
 }
 
 glm::vec2 Window::getCursorPos() const

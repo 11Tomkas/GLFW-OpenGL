@@ -1,10 +1,8 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
-#include "GLFW\glfw3.h"
-#include "glm\glm.hpp"
-#include "glm\gtc\matrix_transform.hpp"
-#include "glm\gtc\type_ptr.hpp"
+#include "glfw.hpp"
+#include "glm.hpp"
 
 class Window
 {
@@ -21,8 +19,8 @@ class Window
         void setInputMode(int mode, int value) const;
         GLFWkeyfun setKeyCallback(GLFWkeyfun callBack) const;
         int shouldClose() const;
-        int getKey(int key) const;
         void swapBuffers() const;
+        int getKey(int key) const;
         glm::vec2 getCursorPos() const;
     private:
         GLFWwindow* m_pWindow;

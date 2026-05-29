@@ -1,5 +1,11 @@
 #version 460 core
 
+in vec3 fPosition;
+in vec3 fNormal;
+in vec2 fTexCoord;
+
+out vec4 oColor;
+
 struct DirectionLight
 {
     vec3 direction;
@@ -33,56 +39,46 @@ struct SpotLight
     vec3 specular;
 };
 
-in vec3 fPosition;
-in vec3 fNormal;
-in vec2 fTextureCoord;
-
-out vec4 oFragment;
-
 uniform sampler2D uDiffuse;
 uniform sampler2D uSpecular;
 uniform float uShininess;
-
 uniform vec3 uCameraPosition;
-
 uniform DirectionLight uDirectionLight;
 uniform PointLight uPointLights[4];
 uniform SpotLight uSpotLight;
 
-vec3 diffuseTexture = texture(uDiffuse, fTextureCoord).rgb;
-vec3 specularTexture = texture(uSpecular, fTextureCoord).rgb;
 vec3 normal = normalize(fNormal);
+vec3 diffuseTex = texture(uDiffuse, fTexCoord).rgb;
+vec3 specularTex = texture(uSpecular, fTexCoord).rgb;
 vec3 cameraDirection = normalize(uCameraPosition - fPosition);
 
-vec3 calculateDirectionLight();
+vec3 calculateDirectionLight(DirectionLight directionLight);
 vec3 calculatePointLight(PointLight pointLight);
-vec3 calculateSpotLight();
+vec3 calculateSpotLight(SpotLight spotLight);
 
 void main()
 {
-    vec3 color = vec3(0.0f, 0.0f, 0.0f);
+    vec3 color = vec3(0.0f);
 
-    // color += calculateDirectionLight();
-
+    color += calculateDirectionLight(uDirectionLight);
     for (uint i = 0; i < 4; ++i)
         color += calculatePointLight(uPointLights[i]);
+    color += calculateSpotLight(uSpotLight);
 
-    color += calculateSpotLight();
-
-    oFragment = vec4(color, 1.0f);
+    oColor = vec4(color, 1.0f);
 }
 
-vec3 calculateDirectionLight()
+vec3 calculateDirectionLight(DirectionLight directionLight)
 {
-    vec3 ambient = diffuseTexture * uDirectionLight.ambient;
+    vec3 ambient = diffuseTex.rgb * directionLight.ambient;
 
-    vec3 lightDirection = normalize(uDirectionLight.direction);
+    vec3 lightDirection = normalize(directionLight.direction);
     float diffuseStrength = max(dot(-lightDirection, normal), 0.0f);
-    vec3 diffuse = diffuseTexture * diffuseStrength * uDirectionLight.diffuse;
+    vec3 diffuse = diffuseTex * diffuseStrength * directionLight.diffuse;
 
     vec3 reflectDirection = reflect(lightDirection, normal);
     float specularStrength = pow(max(dot(cameraDirection, reflectDirection), 0.0f), uShininess);
-    vec3 specular = specularTexture * specularStrength * uDirectionLight.specular;
+    vec3 specular = specularTex * specularStrength * directionLight.specular;
 
     return ambient + diffuse + specular;
 }
@@ -91,14 +87,14 @@ vec3 calculatePointLight(PointLight pointLight)
 {
     vec3 lightDirection = normalize(fPosition - pointLight.position);
     float diffuseStrength = max(dot(-lightDirection, normal), 0.0f);
-    vec3 diffuse = diffuseTexture * diffuseStrength * pointLight.diffuse;
+    vec3 diffuse = diffuseTex * diffuseStrength * pointLight.diffuse;
 
     vec3 reflectDirection = reflect(lightDirection, normal);
     float specularStrength = pow(max(dot(cameraDirection, reflectDirection), 0.0f), uShininess);
-    vec3 specular = specularTexture * specularStrength * pointLight.specular;
+    vec3 specular = specularTex * specularStrength * pointLight.specular;
 
-    float distance = length(pointLight.position - fPosition);
-    float attenuation = 1.0f / (pointLight.constant + pointLight.linear * distance + pointLight.quadratic * (distance * distance));
+    float _distance = length(pointLight.position - fPosition);
+    float attenuation = 1.0f / (pointLight.constant + _distance * pointLight.linear + (_distance * _distance) * pointLight.quadratic);
 
     diffuse *= attenuation;
     specular *= attenuation;
@@ -106,28 +102,25 @@ vec3 calculatePointLight(PointLight pointLight)
     return diffuse + specular;
 }
 
-vec3 calculateSpotLight()
+vec3 calculateSpotLight(SpotLight spotLight)
 {
-    vec3 lightDirection = normalize(fPosition - uSpotLight.position);
+    vec3 lightDirection = normalize(fPosition - spotLight.position);
     float diffuseStrength = max(dot(-lightDirection, normal), 0.0f);
-    vec3 diffuse = diffuseTexture * diffuseStrength * uSpotLight.diffuse;
+    vec3 diffuse = diffuseTex * diffuseStrength * spotLight.diffuse;
 
     vec3 reflectDirection = reflect(lightDirection, normal);
     float specularStrength = pow(max(dot(cameraDirection, reflectDirection), 0.0f), uShininess);
-    vec3 specular = specularTexture * specularStrength * uSpotLight.specular;
+    vec3 specular = specularTex * specularStrength * spotLight.specular;
 
-    float distance = length(uSpotLight.position - fPosition);
-    float attenuation = 1.0f / (uSpotLight.constant + uSpotLight.linear * distance + uSpotLight.quadratic * (distance * distance));
+    float _distance = length(spotLight.position - fPosition);
+    float attenuation = 1.0f / (spotLight.constant + _distance * spotLight.linear + (_distance * _distance) * spotLight.quadratic);
 
-    diffuse *= attenuation;
-    specular *= attenuation;
+    float theta = dot(lightDirection, normalize(spotLight.direction));
+    float epsilon = spotLight.innerCutOff - spotLight.outerCutOff;
+    float intensity = clamp(((theta - spotLight.outerCutOff) / epsilon), 0.0f, 1.0f);
 
-    float theta = dot(lightDirection, normalize(uSpotLight.direction));
-    float epsilon = uSpotLight.innerCutOff - uSpotLight.outerCutOff;
-    float intensity = clamp(((theta - uSpotLight.outerCutOff) / epsilon), 0.0f, 1.0f);
-
-    diffuse *= intensity;
-    specular *= intensity;
+    diffuse *= attenuation * intensity;
+    specular *= attenuation * intensity;
 
     return diffuse + specular;
 }

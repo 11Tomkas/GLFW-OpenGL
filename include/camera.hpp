@@ -1,9 +1,7 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
-#include "glm\glm.hpp"
-#include "glm\gtc\matrix_transform.hpp"
-#include "glm\gtc\type_ptr.hpp"
+#include "glm.hpp"
 #include "window.hpp"
 
 class Camera
@@ -16,6 +14,7 @@ class Camera
         Camera& operator=(const Camera&) = delete;
         Camera& operator=(Camera&&) = delete;
 
+        void update(const Window& window);
         void updatePosition(const Window& window);
         void updateFront(const Window& window);
         const glm::vec3& position() const;

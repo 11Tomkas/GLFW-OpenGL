@@ -6,6 +6,5 @@ include/GLFW
 include/glm
 include/stb_image.h
 lib
-compile.cmd
-run.cmd
+*.cmd
 makefile
