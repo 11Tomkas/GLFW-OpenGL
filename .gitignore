@@ -1,10 +1,7 @@
 .vscode
 bin
 image
-include/glad
-include/GLFW
-include/glm
-include/stb_image.h
+model
 lib
 *.cmd
 makefile

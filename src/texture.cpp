@@ -24,6 +24,7 @@ void Texture::unbind(unsigned int target) const
     glBindTexture(target, 0);
 }
 
+#include <iostream>
 void Texture::image2D(unsigned int target, int level, int internalFormat, int border, unsigned int format, unsigned int type, const char* fileName) const
 {
     int width;

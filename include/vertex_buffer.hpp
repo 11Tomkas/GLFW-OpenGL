@@ -11,7 +11,6 @@ class VertexBuffer
         VertexBuffer& operator=(const VertexBuffer&) = delete;
         VertexBuffer& operator=(VertexBuffer&&) = delete;
 
-        void genBuffers();
         void bind(unsigned int target) const;
         void unbind(unsigned int target) const;
         void data(unsigned int target, long long size, const void* data, unsigned int usage) const;

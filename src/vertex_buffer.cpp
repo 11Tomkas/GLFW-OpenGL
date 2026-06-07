@@ -5,16 +5,12 @@
 VertexBuffer::VertexBuffer()
     : m_name{ 0 }
 {
+    glGenBuffers(1, &m_name);
 }
 
 VertexBuffer::~VertexBuffer()
 {
     glDeleteBuffers(1, &m_name);
-}
-
-void VertexBuffer::genBuffers()
-{
-    glGenBuffers(1, &m_name);
 }
 
 void VertexBuffer::bind(unsigned int target) const

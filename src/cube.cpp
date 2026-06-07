@@ -12,8 +12,6 @@ struct Vertex
     glm::vec2 textureCoord;
 };
 
-static VertexBuffer sArrayBuffer;
-
 Cube::Cube()
     : m_vertexArray{}
     , m_position{ 0.0f, 0.0f, 0.0f }
@@ -22,6 +20,7 @@ Cube::Cube()
     , m_scale{ 1.0f, 1.0f, 1.0f }
 {
     static bool cubeInit{ true };
+    static VertexBuffer arrayBuffer;
 
     if (cubeInit)
     {
@@ -70,25 +69,24 @@ Cube::Cube()
             {{-0.5f,  0.5f, -0.5f}, {}, { 0.0f,  1.0f,  0.0f}, {0.0f, 1.0f}}
         };
 
-        sArrayBuffer.genBuffers();
-        sArrayBuffer.bind(GL_ARRAY_BUFFER);
-        sArrayBuffer.data(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        sArrayBuffer.unbind(GL_ARRAY_BUFFER);
+        arrayBuffer.bind(GL_ARRAY_BUFFER);
+        arrayBuffer.data(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        arrayBuffer.unbind(GL_ARRAY_BUFFER);
 
         cubeInit = false;
     }
 
     m_vertexArray.bind();
-    sArrayBuffer.bind(GL_ARRAY_BUFFER);
-    sArrayBuffer.enableVertexAttribArray(0);
-    sArrayBuffer.vertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(0));
-    sArrayBuffer.enableVertexAttribArray(1);
-    sArrayBuffer.vertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(12));
-    sArrayBuffer.enableVertexAttribArray(2);
-    sArrayBuffer.vertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(24));
-    sArrayBuffer.enableVertexAttribArray(3);
-    sArrayBuffer.vertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(36));
-    sArrayBuffer.unbind(GL_ARRAY_BUFFER);
+    arrayBuffer.bind(GL_ARRAY_BUFFER);
+    arrayBuffer.enableVertexAttribArray(0);
+    arrayBuffer.vertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(0));
+    arrayBuffer.enableVertexAttribArray(1);
+    arrayBuffer.vertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(12));
+    arrayBuffer.enableVertexAttribArray(2);
+    arrayBuffer.vertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(24));
+    arrayBuffer.enableVertexAttribArray(3);
+    arrayBuffer.vertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(36));
+    arrayBuffer.unbind(GL_ARRAY_BUFFER);
     m_vertexArray.unbind();
 }
 
